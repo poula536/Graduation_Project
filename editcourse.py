@@ -43,18 +43,19 @@ dep_comp.current(0)
 dep_comp.bind("<<ComboboxSelected>>")
 dep_comp.place(x=25,y=110)
 '''''
-def on_enter(e):
-    department_entry.delete(0,'end')
-def on_leave(e):
-    department_name = department_entry.get()
-    if department_name=='':
-        department_entry.insert(0, 'اسم الشعبة')
 
-department_entry = Entry(frame,width=35,fg='#181823',border=0,bg="#ECF9FF",font=('Microsoft YaHei UI Light ',15))
-department_entry.place(x=30,y=80)
-department_entry.insert(0,'اسم الشعبة')
-department_entry.bind('<FocusIn>',on_enter)
-department_entry.bind('<FocusOut>',on_leave)
+def on_enter(e):
+    old_doctorname_entry.delete(0,'end')
+def on_leave(e):
+    old_name = old_doctorname_entry.get()
+    if old_name=='':
+        old_doctorname_entry.insert(0, 'اسم الدكتور القديم')
+
+old_doctorname_entry = Entry(frame,width=35,fg='#181823',border=0,bg="#ECF9FF",font=('Microsoft YaHei UI Light ',15))
+old_doctorname_entry.place(x=30,y=80)
+old_doctorname_entry.insert(0,'اسم الدكتور القديم')
+old_doctorname_entry.bind('<FocusIn>',on_enter)
+old_doctorname_entry.bind('<FocusOut>',on_leave)
 Frame(frame,width=295,height=2,bg="black").place(x=25,y=110)
 
 
@@ -94,14 +95,14 @@ def clear():
     subject_entry.delete(0, END)
     subject_entry.insert(0,'اسم المادة')
 
-    department_entry.delete(0, END)
-    department_entry.insert(0,'اسم الشعبة')
+    old_doctorname_entry.delete(0, END)
+    old_doctorname_entry.insert(0,'اسم الدكتور القديم')
 
 
 
 
 def edit():
-    if department_entry.get()=='اسم الشعبة' or subject_entry.get()=='اسم المادة' or doctorname_entry.get()=='اسم الدكتور الجديد':
+    if old_doctorname_entry.get()=='اسم الدكتور القديم' or subject_entry.get()=='اسم المادة' or doctorname_entry.get()=='اسم الدكتور الجديد':
         messagebox.showerror('Error', 'all fields are required')
     else:
         messagebox.showinfo('Done', 'Registration is done successfully')

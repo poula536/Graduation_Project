@@ -1,5 +1,7 @@
 import tkinter
 from tkinter import *
+import cv2
+from tkinter import messagebox
 
 attendance_window=Tk()
 attendance_window.title("Attendance System")
@@ -27,29 +29,32 @@ Label(attendance_window,image=img_logo, bg="white",background="#ECF9FF").place(x
 frame = Frame(attendance_window,width=350,height=370,bg="#ECF9FF")
 frame.place(x=480,y=100)
 
-heading = Label(frame,text="مرحبا دكتور اسامة",fg="black",bg="#ECF9FF",font=('Microsoft YaHei UI Light ',25,'bold'))
-heading.place(x=100,y=-6)
-
 
 def take_attendance():
-    print("Taking attendance...")
+    print("Window will be added soon")
 
-def add_new():
-    print("Adding a new student...")
+
+def take_attendance_manually():
+    attendance_window.withdraw()
+    import addstudent
+    addstudent.Newstudent_window.deiconify()
 
 def view_sheets():
     print("Viewing attendance sheets...")
 
 
 # create three buttons for taking attendance, adding new students, and viewing sheets
-attendance_button = Button(frame,width=15,border=0 ,bg="#0081C9",fg='white',text="اخذ الحضور", command=take_attendance, font=("Arial", 14))
+attendance_button = Button(frame,width=15,border=0 ,bg="#0081C9",fg='white',text="اخذ الحضور",
+                           command=take_attendance, font=("Arial", 14))
 attendance_button.place(x=140,y=80)
 
 
-add_button = Button(frame, width=15,border=0,bg="#0081C9",fg='white',text="اخذ الحضور يدويا", command=add_new, font=("Arial", 14))
+add_button = Button(frame, width=15,border=0,bg="#0081C9",fg='white',text="اخذ الحضور يدويا",
+                    command=take_attendance_manually, font=("Arial", 14))
 add_button.place(x=140,y=150)
 
-sheets_button = Button(frame,width=15,border=0 ,bg="#0081C9",fg='white',text="اظهار كشف الحضور", command=view_sheets, font=("Arial", 14))
+sheets_button = Button(frame,width=15,border=0 ,bg="#0081C9",fg='white',text="اظهار كشف الحضور",
+                       command=view_sheets, font=("Arial", 14))
 sheets_button.place(x=140,y=220)
 
 attendance_window.mainloop()

@@ -26,16 +26,18 @@ Label(admin_dashboard_window, bg="white", image=img_logo, background="#ECF9FF").
 frame = Frame(admin_dashboard_window, width=350, height=370, bg="#ECF9FF")
 frame.place(x=480, y=100)
 
-heading = Label(frame, text="admin مرحبا محمد", fg="black", bg="#ECF9FF",
-                font=('Microsoft YaHei UI Light ', 25, 'bold'))
-heading.place(x=100, y=-6)
-
+#heading = Label(frame, text="admin مرحبا محمد", fg="black", bg="#ECF9FF",font=('Microsoft YaHei UI Light ', 25, 'bold'))
+#heading.place(x=100, y=-6)
 
 def createAccount_btn():
     admin_dashboard_window.withdraw()
+    import addnewDoctor
+    addnewDoctor.new_doctor_window.deiconify()
+
+def creatAdmin():
+    admin_dashboard_window.withdraw()
     import addnewadmin
     addnewadmin.new_admin_window.deiconify()
-
 
 def edit_data_btn():
     admin_dashboard_window.withdraw()
@@ -50,9 +52,14 @@ def add_course_btn():
 
 
 # create three buttons for taking attendance, adding new students, and viewing sheets
-attendance_button = Button(frame, width=15, border=0, bg="#0081C9", fg='white', text="انشاء حساب جديد",
+attendance_button = Button(frame, width=15, border=0, bg="#0081C9", fg='white', text="انشاء حساب جديد لدكتور",
                            command=createAccount_btn, font=("Arial", 14))
+attendance_button.place(x=140, y=10)
+
+attendance_button = Button(frame, width=15, border=0, bg="#0081C9", fg='white', text="انشاء حساب جديد لادمن",
+                           command=creatAdmin, font=("Arial", 14))
 attendance_button.place(x=140, y=80)
+
 
 add_button = Button(frame, width=15, border=0, bg="#0081C9", fg='white', text="تغيير دكتور", command=edit_data_btn,
                     font=("Arial", 14))

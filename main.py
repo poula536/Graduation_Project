@@ -1,7 +1,7 @@
 import tkinter
 from tkinter import *
 from tkinter import messagebox
-
+import pymysql
 
 login_window=Tk()
 login_window.title('Login')
@@ -61,15 +61,42 @@ eye_img = tkinter.PhotoImage(file='openeye.png',master=login_window)
 openeye_btn = Button(frame,bd=0,image=eye_img,activebackground="#ECF9FF",command=hide)
 openeye_btn.place(x=280, y=170)
 
+#get doctor name from database
+def great_doc():
+    con_db = pymysql.connect(host='localhost', user='root', password='123456789')
+    mycursor = con_db.cursor()
+    query = 'use facerecognation_attendance_System'
+    mycursor.execute(query)
+    query = 'select full_name from lecturer where email=%s'
+    mycursor.execute(query, (email_entry.get()))
+    row = mycursor.fetchall()[0]
+    tex = "welcome doctor "
+    return tex +" ".join(row)
 
+
+
+
+
+#connect to database
 def login():
-    if email_entry.get()=='البريد الالكتروني' or password_entry.get()=='كلمه السر':
-        messagebox.showerror('Error','all fields are required')
+    if email_entry.get() == 'البريد الالكتروني' or password_entry.get() == 'كلمه السر':
+        messagebox.showerror('Error', 'all fields are required')
     else:
-        login_window.withdraw()
-        import dashboard_doc
-        dashboard_doc.doctor_window.deiconify()
-
+        con_db = pymysql.connect(host='localhost', user='root', password='123456789')
+        mycursor = con_db.cursor()
+        query = 'use facerecognation_attendance_System'
+        mycursor.execute(query)
+        query = 'select * from lecturer where email=%s and pass=%s'
+        mycursor.execute(query, (email_entry.get(), password_entry.get()))
+        row = mycursor.fetchone()
+        if row == None:
+            messagebox.showerror('Error', 'invalid email or password')
+        else:
+            login_window.withdraw()
+            from dashboard_doc import doctor_window
+            doctor_window.withdraw()
+            Label(doctor_window,text=great_doc(),fg="#070A52",width=25,bg="#ECF9FF",font=('Microsoft YaHei UI Light ',30)).place(x=210,y=20)
+            doctor_window.deiconify()
 
 
 def admin_login():
@@ -82,8 +109,12 @@ btn_login = Button(frame,cursor='hand2',width=39,pady=7,text="تسجيل الد�
                    bg="#57a1f8",fg='white',border=0,command=login)
 btn_login.place(x=35,y=250)
 
-admin_btn = Button(frame,text="Log in as admin",cursor='hand2',fg='red',bg="#ECF9FF",bd=0,activebackground="#ECF9FF",font=('Microsoft YaHei UI Light ',10),command=admin_login)
+admin_btn = Button(frame,text="Log in as admin",cursor='hand2',fg='red',bg="#ECF9FF",bd=0,activebackground="#ECF9FF",
+                   font=('Microsoft YaHei UI Light ',10),command=admin_login)
 admin_btn.place(x=85,y=300)
+
+
+
 
 
 login_window.mainloop()

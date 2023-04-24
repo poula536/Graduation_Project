@@ -1,6 +1,7 @@
 import tkinter
 from tkinter import *
 from tkinter import messagebox
+import pymysql
 
 new_admin_window = Tk()
 new_admin_window.title('Add Admin')
@@ -29,60 +30,23 @@ heading.place(x=100, y=10)
 
 
 def on_enter(e):
-    newadmin_email_entry.delete(0, 'end')
+    newadmin_fullname_entry.delete(0, 'end')
 
 
 def on_leave(e):
-    name = newadmin_email_entry.get()
+    name = newadmin_fullname_entry.get()
     if name == '':
-        newadmin_email_entry.insert(0, 'عنوان البريد الالكتروني')
+        newadmin_fullname_entry.insert(0, 'اسم المستخدم كامل')
 
+newadmin_fullname_entry = Entry(frame, width=35, fg='#181823', border=0, bg="#ECF9FF", font=('Microsoft YaHei UI Light ', 15))
+newadmin_fullname_entry.place(x=30, y=135)
+newadmin_fullname_entry.insert(0, 'اسم المستخدم كامل')
+newadmin_fullname_entry.bind('<FocusIn>', on_enter)
+newadmin_fullname_entry.bind('<FocusOut>', on_leave)
+Frame(frame, width=295, height=2, bg="black").place(x=25, y=160)
 
-newadmin_email_entry = Entry(frame, width=35, fg='#181823', border=0, bg="#ECF9FF", font=('Microsoft YaHei UI Light ', 15))
-newadmin_email_entry.place(x=30, y=95)
-newadmin_email_entry.insert(0, 'عنوان البريد الالكتروني')
-newadmin_email_entry.bind('<FocusIn>', on_enter)
-newadmin_email_entry.bind('<FocusOut>', on_leave)
-Frame(frame, width=295, height=2, bg="black").place(x=25, y=120)
-
-
-def on_enter(e):
-    admin_username_entry.delete(0, 'end')
-
-
-def on_leave(e):
-    teacher_name = admin_username_entry.get()
-    if teacher_name == '':
-        admin_username_entry.insert(0, 'اسم المستخدم')
-
-
-admin_username_entry = Entry(frame, width=35, fg='#181823', border=0, bg="#ECF9FF", font=('Microsoft YaHei UI Light ', 15))
-admin_username_entry.place(x=30, y=145)
-admin_username_entry.insert(0, 'اسم المستخدم')
-admin_username_entry.bind('<FocusIn>', on_enter)
-admin_username_entry.bind('<FocusOut>', on_leave)
-Frame(frame, width=295, height=2, bg="black").place(x=25, y=173)
-
-
-def on_enter(e):
-    institute_entry.delete(0, 'end')
-
-
-def on_leave(e):
-    institute_name = institute_entry.get()
-    if institute_name == '':
-        institute_entry.insert(0, 'اسم المعهد')
-
-
-institute_entry = Entry(frame, width=35, fg='#181823', border=0, bg="#ECF9FF", font=('Microsoft YaHei UI Light ', 15))
-institute_entry.place(x=30, y=200)
-institute_entry.insert(0, 'اسم المعهد')
-institute_entry.bind('<FocusIn>', on_enter)
-institute_entry.bind('<FocusOut>', on_leave)
-Frame(frame, width=295, height=2, bg="black").place(x=25, y=230)
 
 #password
-
 def on_enter(e):
     password_entry.delete(0, 'end')
 
@@ -94,11 +58,11 @@ def on_leave(e):
 
 
 password_entry = Entry(frame, width=35, fg='#181823', border=0, bg="#ECF9FF", font=('Microsoft YaHei UI Light ', 15))
-password_entry.place(x=30, y=254)
+password_entry.place(x=30, y=205)
 password_entry.insert(0, 'كلمه السر')
 password_entry.bind('<FocusIn>', on_enter)
 password_entry.bind('<FocusOut>', on_leave)
-Frame(frame, width=295, height=2, bg="black").place(x=25, y=280)
+Frame(frame, width=295, height=2, bg="black").place(x=25, y=230)
 
 
 def on_enter(e):
@@ -112,16 +76,16 @@ def on_leave(e):
 
 
 conf_pass_entry = Entry(frame, width=35, fg='#181823', border=0, bg="#ECF9FF", font=('Microsoft YaHei UI Light ', 15))
-conf_pass_entry.place(x=30, y=305)
+conf_pass_entry.place(x=30, y=280)
 conf_pass_entry.insert(0, 'تاكيد كلمه السر')
 conf_pass_entry.bind('<FocusIn>', on_enter)
 conf_pass_entry.bind('<FocusOut>', on_leave)
-Frame(frame, width=295, height=2, bg="black").place(x=25, y=330)
+Frame(frame, width=295, height=2, bg="black").place(x=25, y=305)
 #End password
 
 def clear():
-    newadmin_email_entry.delete(0,END)
-    newadmin_email_entry.insert(0,'عنوان البريد الالكتروني')
+    newadmin_fullname_entry.delete(0,END)
+    newadmin_fullname_entry.insert(0,'اسم المستخدم كامل')
 
     conf_pass_entry.delete(0, END)
     conf_pass_entry.insert(0,'تاكيد كلمه السر')
@@ -129,20 +93,33 @@ def clear():
     password_entry.delete(0, END)
     password_entry.insert(0,'كلمه السر')
 
-    institute_entry.delete(0, END)
-    institute_entry.insert(0,'اسم المعهد')
 
-    admin_username_entry.delete(0, END)
-    admin_username_entry.insert(0,'اسم المستخدم')
+#connect to database
+def addDoctor():
+    con_db=pymysql.connect(host='localhost',user='root',password='123456789')
+    mycursor = con_db.cursor()
+    query = 'use facerecognation_attendance_System'
+    mycursor.execute(query)
+    query = 'select * from admin where full_name=%s'
+    mycursor.execute(query, (newadmin_fullname_entry.get()))
+    row2 = mycursor.fetchone()
+    if row2 != None:
+        messagebox.showerror('Error', 'Name already exists')
+    else:
+        query = 'insert into admin(full_name,pass) values(%s,%s)'
+        mycursor.execute(query, (newadmin_fullname_entry.get(),password_entry.get()))
+        messagebox.showinfo('Done', 'Registration is done successfully')
+        con_db.commit()
+        con_db.close()
 
 
 def creat_account():
-    if newadmin_email_entry.get()=='عنوان البريد الالكتروني' or password_entry.get()=='كلمه السر' or conf_pass_entry.get()=='تاكيد كلمه السر' or institute_entry.get()=='اسم المعهد' or admin_username_entry.get()=='اسم المستخدم':
+    if newadmin_fullname_entry.get()=='اسم المستخدم كامل' or password_entry.get()=='كلمه السر' or conf_pass_entry.get()=='تاكيد كلمه السر':
         messagebox.showerror('Error', 'all fields are required')
     elif password_entry.get()!= conf_pass_entry.get():
         messagebox.showerror('Error','Password must be the same')
     else:
-        messagebox.showinfo('Done', 'Registration is done successfully')
+        addDoctor()
         clear()
 
 

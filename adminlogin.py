@@ -1,6 +1,8 @@
 import tkinter
 from tkinter import *
 from tkinter import messagebox
+import pymysql
+
 
 adminlogin_window = Tk()
 adminlogin_window.title('Admin Login')
@@ -33,20 +35,19 @@ heading.place(x=100, y=5)
 
 
 def on_enter(e):
-    admin_email_entry.delete(0, 'end')
-
+    admin_username_entry.delete(0, 'end')
 
 def on_leave(e):
-    email = admin_email_entry.get()
-    if email == '':
-        admin_email_entry.insert(0, 'البريد الالكتروني')
+    name = admin_username_entry.get()
+    if name == '':
+        admin_username_entry.insert(0, 'اسم المستخدم')
 
 
-admin_email_entry = Entry(frame, width=35, fg='#181823', border=0, bg="#ECF9FF", font=('Microsoft YaHei UI Light ', 15))
-admin_email_entry.place(x=30, y=100)
-admin_email_entry.insert(0, 'البريد الالكتروني')
-admin_email_entry.bind('<FocusIn>', on_enter)
-admin_email_entry.bind('<FocusOut>', on_leave)
+admin_username_entry = Entry(frame, width=35, fg='#181823', border=0, bg="#ECF9FF", font=('Microsoft YaHei UI Light ', 15))
+admin_username_entry.place(x=30, y=100)
+admin_username_entry.insert(0, 'اسم المستخدم')
+admin_username_entry.bind('<FocusIn>', on_enter)
+admin_username_entry.bind('<FocusOut>', on_leave)
 
 Frame(frame, width=295, height=2, bg="black").place(x=25, y=125)
 
@@ -81,13 +82,26 @@ eye_img = tkinter.PhotoImage(file='openeye.png',master=adminlogin_window)
 openeye_btn = Button(frame,bd=0,image=eye_img,activebackground="#ECF9FF",command=hide)
 openeye_btn.place(x=280, y=170)
 
+
+
+#connect to database
 def adminlogin():
-   if admin_email_entry.get()=='البريد الالكتروني' or admin_pass_entry.get()=='كلمه السر':
+   if admin_username_entry.get()=='اسم المستخدم' or admin_pass_entry.get()=='كلمه السر':
        messagebox.showerror('Error', 'all fields are required')
    else:
-       adminlogin_window.withdraw()
-       import dashboard_admin
-       dashboard_admin.admin_dashboard_window.deiconify()
+       con_db = pymysql.connect(host='localhost', user='root', password='123456789')
+       mycursor = con_db.cursor()
+       query = 'use facerecognation_attendance_System'
+       mycursor.execute(query)
+       query = 'select * from admin where full_name=%s and pass=%s'
+       mycursor.execute(query,(admin_username_entry.get(),admin_pass_entry.get()))
+       row = mycursor.fetchone()
+       if row == None:
+           messagebox.showerror('Error', 'invalid username or password')
+       else:
+           adminlogin_window.withdraw()
+           import dashboard_admin
+           dashboard_admin.admin_dashboard_window.deiconify()
 
 btn_login = Button(frame, cursor='hand2',width=39, pady=7, text="تسجيل الدخول",
                    bg="#57a1f8", fg='white', border=0, command=adminlogin)
